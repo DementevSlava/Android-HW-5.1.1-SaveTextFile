@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">ListCustomElements</string>
+    <string name="save_file">Файл сохранен</string>
+    <string name="save_file_error">Ошибка при сохранении</string>
 
     <string name="title1">Блок 1. Введение в Android. Структура проекта</string>
     <string name="title2">Блок 2. Android View</string>

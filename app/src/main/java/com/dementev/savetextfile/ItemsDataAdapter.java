@@ -40,7 +40,13 @@ public class ItemsDataAdapter extends BaseAdapter {
         notifyDataSetChanged();
     }
 
-
+    public List<String> getAdapterStrings() {
+        List<String> list = new ArrayList<>();
+        for (ItemData item : items) {
+            list.add(item.getTitle());
+        }
+        return list;
+    }
 
     @Override
     public int getCount() {
