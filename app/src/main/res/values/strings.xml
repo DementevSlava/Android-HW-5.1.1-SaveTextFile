@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">ListCustomElements</string>
+
+    <string name="title1">Блок 1. Введение в Android. Структура проекта</string>
+    <string name="title2">Блок 2. Android View</string>
+    <string name="title3">Блок 3. Ресурсы и стили</string>
+    <string name="title4">Блок 4. Динамический интерфейс</string>
+    <string name="title5">Блок 5. Работа с файлами</string>
+    <string name="title6">Блок 6. Activity</string>
+    <string name="title7">Блок 7. Intent</string>
+    <string name="remove">Удалить</string>
+</resources>
