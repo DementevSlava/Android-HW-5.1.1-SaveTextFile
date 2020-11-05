@@ -2,7 +2,6 @@ package com.dementev.savetextfile;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Environment;
 import android.widget.Toast;
@@ -13,15 +12,19 @@ import androidx.core.content.ContextCompat;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Scanner;
 
 public class ExternalFiles {
     Activity activity;
+    String fileName;
 
     public static final int REQUEST_CODE_PERMISSION_WRITE_STORAGE = 11;
 
-    public ExternalFiles(Activity activity) {
+    public ExternalFiles(Activity activity, String fileName) {
         this.activity = activity;
+        this.fileName = fileName;
 
         int permissionStatus = ContextCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
 
@@ -33,7 +36,7 @@ public class ExternalFiles {
 
     public void saveExternalFile(List<String> list) {
         if (isExternalStorageWritable()) {
-            File saveFile = new File(activity.getExternalFilesDir(null), "file.txt");
+            File saveFile = new File(activity.getExternalFilesDir(null), fileName);
             FileWriter fileWriter = null;
             try {
                 fileWriter = new FileWriter(saveFile);
@@ -57,31 +60,30 @@ public class ExternalFiles {
 
     }
 
-    public List<String> loadExternalFile(){
+    public List<String> loadExternalFile() {
         List<String> list;
-        File loadFile = new File(activity.getExternalFilesDir(null), "file.txt");
+        File loadFile = new File(activity.getExternalFilesDir(null), fileName);
         try {
-            S
+            Scanner scanner = new Scanner(loadFile);
+            list = Arrays.asList(scanner.nextLine().split(";"));
+        } catch (Exception e) {
+            e.printStackTrace();
+            list = null;
         }
+        return list;
     }
 
 
     /* Checks if external storage is available for read and write */
     public boolean isExternalStorageWritable() {
         String state = Environment.getExternalStorageState();
-        if (Environment.MEDIA_MOUNTED.equals(state)) {
-            return true;
-        }
-        return false;
+        return Environment.MEDIA_MOUNTED.equals(state);
     }
 
     /* Checks if external storage is available to at least read */
     public boolean isExternalStorageReadable() {
         String state = Environment.getExternalStorageState();
-        if (Environment.MEDIA_MOUNTED.equals(state) ||
-                Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
-            return true;
-        }
-        return false;
+        return Environment.MEDIA_MOUNTED.equals(state) ||
+                Environment.MEDIA_MOUNTED_READ_ONLY.equals(state);
     }
 }

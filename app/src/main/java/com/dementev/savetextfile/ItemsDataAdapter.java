@@ -14,13 +14,25 @@ import java.util.List;
 
 
 public class ItemsDataAdapter extends BaseAdapter {
+    ExternalFiles externalFiles;
+    Context context;
 
     private List<ItemData> items;
     private LayoutInflater inflater;
 
+    private View.OnClickListener remBtnListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            removeItem((Integer) v.getTag());
+            externalFiles.saveExternalFile(getAdapterStrings());
+        }
+    };
 
 
-    ItemsDataAdapter(Context context, List<ItemData> items) {
+    ItemsDataAdapter(Context context, List<ItemData> items, ExternalFiles externalFiles) {
+        this.context = context;
+        this.externalFiles = externalFiles;
+
         if (items == null) {
             this.items = new ArrayList<>();
         } else {
@@ -79,19 +91,15 @@ public class ItemsDataAdapter extends BaseAdapter {
         ImageView image = view.findViewById(R.id.icon);
         TextView title = view.findViewById(R.id.title);
         TextView subtitle = view.findViewById(R.id.subtitle);
+        Button remBtn = view.findViewById(R.id.remBtn);
 
         image.setImageDrawable(itemData.getImage());
         title.setText(itemData.getTitle());
         subtitle.setText(itemData.getSubtitle());
 
-        Button remBtn = view.findViewById(R.id.remBtn);
-        remBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                items.remove(position);
-                notifyDataSetChanged();
-            }
-        });
+        remBtn.setTag(position);
+        remBtn.setOnClickListener(remBtnListener);
+
         return view;
     }
 }

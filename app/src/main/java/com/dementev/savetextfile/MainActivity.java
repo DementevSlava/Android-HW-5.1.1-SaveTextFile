@@ -2,8 +2,6 @@ package com.dementev.savetextfile;
 
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -18,7 +16,7 @@ import java.util.List;
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
-
+    ExternalFiles externalFiles;
     // Генератор случайностей
     private Random random = new Random();
     // Наш адаптер
@@ -42,13 +40,18 @@ public class MainActivity extends AppCompatActivity {
         fillImages();
         fillWord();
 
-        // При тапе по кнопке добавим один новый элемент списка
-        fab.setOnClickListener(view ->
-                generateRandomItemData()
-        );
 
-        adapter = new ItemsDataAdapter(this, null);
+        // При тапе по кнопке добавим один новый элемент списка
+        fab.setOnClickListener(view -> {
+                    generateRandomItemData();
+                    externalFiles.saveExternalFile(adapter.getAdapterStrings());
+                }
+        );
+        externalFiles = new ExternalFiles(this, "save.txt");
+        adapter = new ItemsDataAdapter(this, null, externalFiles);
         listView.setAdapter(adapter);
+
+        generateLoadedItemData();
 
         listView.setOnItemClickListener((parent, view, position, id) ->
                 showItemData(position)
@@ -79,8 +82,16 @@ public class MainActivity extends AppCompatActivity {
         word.add(getString(R.string.title7));
     }
 
+    private void showItemData(int position) {
+        ItemData itemData = adapter.getItem(position);
+        Toast.makeText(MainActivity.this,
+                "Title: " + itemData.getTitle() + "\n" +
+                        "Subtitle: " + itemData.getSubtitle() + "\n",
+                Toast.LENGTH_SHORT).show();
+    }
+
     private void generateRandomItemData() {
-        if (adapter.getCount() < 7 ) {
+        if (adapter.getCount() < word.size()) {
             adapter.addItem(new ItemData(
                     images.get(random.nextInt(images.size())),
                     word.get(adapter.getCount()),
@@ -88,14 +99,18 @@ public class MainActivity extends AppCompatActivity {
         } else {
             Toast.makeText(this, "Больше нет записей", Toast.LENGTH_SHORT).show();
         }
-
     }
 
-    private void showItemData(int position) {
-        ItemData itemData = adapter.getItem(position);
-        Toast.makeText(MainActivity.this,
-                "Title: " + itemData.getTitle() + "\n" +
-                        "Subtitle: " + itemData.getSubtitle() + "\n",
-                Toast.LENGTH_SHORT).show();
+    private void generateLoadedItemData() {
+        List<String> list = externalFiles.loadExternalFile();
+        if (list != null) {
+            for (String s : list) {
+                adapter.addItem(new ItemData(
+                        images.get(random.nextInt(images.size())),
+                        s,
+                        "Разделы"));
+            }
+        }
+
     }
 }
